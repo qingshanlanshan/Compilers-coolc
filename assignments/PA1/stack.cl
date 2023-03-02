@@ -116,7 +116,8 @@ class Main inherits IO {
                   }
                   else if str="" then stack
                   else{
-                     stack<-stack.newNode(str);
+                     -- stack<-stack.newNode(str);
+                     stack;
                   }
                   fi fi fi;
                }else str fi;

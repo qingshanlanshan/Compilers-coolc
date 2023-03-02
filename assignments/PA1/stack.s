@@ -2189,19 +2189,7 @@ label182:
 	lw	$a0 12($s0)
 	b	label181
 label180:
-	lw	$a0 16($s0)
-	sw	$a0 0($sp)
-	addiu	$sp $sp -4
 	lw	$a0 12($s0)
-	bne	$a0 $zero label183
-	la	$a0 str_const1
-	li	$t1 119
-	jal	_dispatch_abort
-label183:
-	lw	$t1 8($a0)
-	lw	$t1 24($t1)
-	jalr		$t1
-	sw	$a0 12($s0)
 label181:
 label162:
 label141:
@@ -2215,55 +2203,55 @@ label132:
 	la	$t2 str_const7
 	move	$t1 $s1
 	la	$a0 bool_const1
-	beq	$t1 $t2 label186
+	beq	$t1 $t2 label185
 	la	$a1 bool_const0
 	jal	equality_test
-label186:
+label185:
 	lw	$t1 12($a0)
-	beqz	$t1 label184
+	beqz	$t1 label183
 	lw	$a0 12($s0)
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	move	$a0 $s0
-	bne	$a0 $zero label187
+	bne	$a0 $zero label186
 	la	$a0 str_const1
-	li	$t1 125
+	li	$t1 126
 	jal	_dispatch_abort
-label187:
+label186:
 	lw	$t1 8($a0)
 	lw	$t1 28($t1)
 	jalr		$t1
-	b	label185
-label184:
+	b	label184
+label183:
 	lw	$s1 16($s0)
 	la	$t2 str_const8
 	move	$t1 $s1
 	la	$a0 bool_const1
-	beq	$t1 $t2 label190
+	beq	$t1 $t2 label189
 	la	$a1 bool_const0
 	jal	equality_test
-label190:
+label189:
 	lw	$t1 12($a0)
-	beqz	$t1 label188
+	beqz	$t1 label187
 	la	$a0 bool_const0
 	sw	$a0 40($s0)
-	b	label189
-label188:
+	b	label188
+label187:
 	lw	$a0 16($s0)
 	sw	$a0 0($sp)
 	addiu	$sp $sp -4
 	lw	$a0 12($s0)
-	bne	$a0 $zero label191
+	bne	$a0 $zero label190
 	la	$a0 str_const1
-	li	$t1 129
+	li	$t1 130
 	jal	_dispatch_abort
-label191:
+label190:
 	lw	$t1 8($a0)
 	lw	$t1 24($t1)
 	jalr		$t1
 	sw	$a0 12($s0)
-label189:
-label185:
+label188:
+label184:
 label133:
 label129:
 label125:
