@@ -67,9 +67,10 @@ class Main inherits IO {
       stack<-new List;
       while flag loop
       {
-         str<-in_string();
          out_string(">");
-         out_string(str);
+         str<-in_string();
+         
+         -- out_string(str);
          out_string("\n");
          if str.length()=1 then {
             if str = "+" then
