@@ -43,30 +43,93 @@ extern YYSTYPE cool_yylval;
  *  Add Your own definitions here
  */
 
+int comment_count=0;
+
 %}
 
 /*
  * Define names for regular expressions here.
  */
 
-DARROW          =>
-
+DARROW              =>
+LE				    <=
+ASSIGN			    <-
+LETTER			    [a-zA-Z]
+DIGIT			    [0-9]
+ULETTER			    [A-Z]
+LLETTER			    [a-z]
+WHITESPACE		    [ \n\f\r\t\v]
+TYPEID			    {ULETTER}({LETTER}|{DIGIT}|_)*
+OBJECTID		    {LLETTER}({LETTER}|{DIGIT}|_)*
+%x COMMENT STRING
 %%
 
  /*
   *  Nested comments
   */
+--.*            {}
+"(*"            {
+                    BEGIN(COMMENT);
+                    comment_count++;
+                }         
+"*)"            {
+                    cool_yylval.error_msg="Unmatched *)";
+                    return(ERROR);
+                }         
+
+<COMMENT>"(*"   {
+                    comment_count--;
+                }
+<COMMENT>"*)"   {
+                    comment_count--;
+                    if(!comment_count)
+                        BEGIN(INITIAL);
+                }
+<COMMENT>\n     {curr_lineno++;}
+<COMMENT>.      {}
+<COMMENT><<EOF>>{
+                    cool_yylval.error_msg="EOF in comment";
+                    BEGIN(INITIAL); 
+                    return(ERROR);
+                }      
 
 
- /*
-  *  The multiple-character operators.
-  */
-{DARROW}		{ return (DARROW); }
+/*
+ *  The multiple-character operators.
+ */
+{DARROW}		                    {return (DARROW);}
 
- /*
-  * Keywords are case-insensitive except for the values true and false,
-  * which must begin with a lower-case letter.
-  */
+
+/*
+ * Keywords are case-insensitive except for the values true and false,
+ * which must begin with a lower-case letter.
+ */
+
+[Cc][Ll][Aa][Ss][Ss]                {return(CLASS);}
+[Ee][Ll][Ss][Ee]                    {return(ELSE);}
+f[Aa][Ll][Ss][Ee]                   {
+                                        cool_yylval.boolean=false;
+                                        return(BOOL_CONST);
+                                    }
+[Ff][Ii]                            {return(FI);}
+[Ii][Ff]                            {return(IF);}
+[Ii][Nn]                            {return(IN);}
+[Ii][Nn][Hh][Ee][Rr][Ii][Tt][Ss]    {return(INHERITS);}
+[Ii][Ss][Vv][Oo][Ii][Dd]            {return(ISVOID);}
+[Ll][Ee][Tt]                        {return(LET);}
+[Ll][Oo][Oo][Pp]                    {return(LOOP);}
+[Pp][Oo][Oo][Ll]                    {return(POOL);}
+[Tt][Hh][Ee][Nn]                    {return(THEN);}
+[Ww][Hh][Ii][Ll][Ee]                {return(WHILE);}
+[Cc][Aa][Ss][Ee]                    {return(CASE);}
+[Ee][Ss][Aa][Cc]                    {return(ESAC);}
+[Nn][Ee][Ww]                        {return(NEW);}
+[Oo][Ff]                            {return(OF);}
+[Nn][Oo][Tt]                        {return(NOT);}
+t[Rr][Uu][Ee]                       {
+                                        cool_yylval.boolean=false;
+                                        return(BOOL_CONST);
+                                    }
 
 
  /*
@@ -75,6 +138,47 @@ DARROW          =>
   *  \n \t \b \f, the result is c.
   *
   */
+\"                      {
+                            BEGIN{STRING};
+                            string_buf_ptr=string_buf;
+                        }
+<STRING>\"              {
+                            if(string_buf_ptr-string_buf>=MAX_STR_CONST)
+                            {
+                                cool_yylval.error_msg="String constant too long";
+                                BEGIN(INITIAL);
+                                return (ERROR);
+                            }
+                            *string_buf_ptr='\0';
+                            cool_yylval.symbol=stringtable.add_string(string_buf);
+                            BEGIN(INITIAL);
+                            return (STR_CONST);
+                        }
+<STRING>\n              {
+                            cool_yylval.error_msg="Unterminated string constant";
+                            curr_lineno++;	//increment line no.
+                            BEGIN(INITIAL);	
+                            return (ERROR);
+                        }
+<STRING>\\n             {
+                            if(string_buf_ptr-string_buf>=MAX_STR_CONST)
+                            {
+                                cool_yylval.error_msg="String constant too long";
+                                BEGIN(IGNORE_STRING);
+                                return (ERROR);
+                            }
+                            *string_buf_ptr++='\n';
+                        }
+<STRING>\\t             {
+                            if(string_buf_ptr-string_buf>=MAX_STR_CONST)
+                            {
+                                cool_yylval.error_msg="String constant too long";
+                                BEGIN(IGNORE_STRING);
+                                return (ERROR);
+                            }
+                            *string_buf_ptr++='\t';
+                        }
+                        
 
 
-%%
+%%   

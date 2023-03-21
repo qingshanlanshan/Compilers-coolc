@@ -6,3 +6,5 @@ handouts/*
 include/*
 lib/*
 src/*
+pascal.flex
+PA2/checker*
