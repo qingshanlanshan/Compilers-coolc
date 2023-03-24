@@ -1,0 +1,50 @@
+#name "test0.cl"
+#2 ERROR "\000"
+#4 ERROR "!"
+#4 '@'
+#4 ERROR "#"
+#4 ERROR "$"
+#4 ERROR "%"
+#4 ERROR "^"
+#4 ERROR "&"
+#4 '*'
+#4 '('
+#4 ')'
+#4 ERROR "_"
+#4 '+'
+#4 '-'
+#4 '='
+#4 '{'
+#4 '}'
+#4 ERROR "["
+#4 ERROR "]"
+#4 ERROR "\\"
+#4 ERROR "|"
+#4 '/'
+#4 ERROR "?"
+#4 '.'
+#4 ERROR ">"
+#4 ','
+#4 '<'
+#4 '~'
+#4 ERROR "`"
+#7 ERROR "Unterminated string constant"
+#9 ERROR "String constant too long"
+#11 ERROR "String constant too long"
+#13 ERROR "String constant too long"
+#15 ERROR "String constant too long"
+#17 ERROR "Unmatched *)"
+#20 STR_CONST "ab\ncd"
+#21 STR_CONST "ab0cd"
+#23 ERROR "String contains null character."
+#25 STR_CONST "12304"
+#26 STR_CONST "123\\04"
+#27 STR_CONST "123\\04"
+#28 STR_CONST "123\\\\04"
+#29 STR_CONST "123\n4"
+#30 STR_CONST "123\\n4"
+#32 ERROR "Unterminated string constant"
+#32 INT_CONST 4
+#33 ERROR "Unterminated string constant"
+#34 STR_CONST "123\n4"
+#38 ERROR "EOF in comment"

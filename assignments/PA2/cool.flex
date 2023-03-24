@@ -1,7 +1,7 @@
 /*
  *  The scanner definition for COOL.
  */
-
+%option noyywrap 
 /*
  *  Stuff enclosed in %{ %} in the first section is copied verbatim to the
  *  output, so headers and global definitions are placed here to be visible
@@ -61,7 +61,7 @@ LLETTER			    [a-z]
 WHITESPACE		    [ \n\f\r\t\v]
 TYPEID			    {ULETTER}({LETTER}|{DIGIT}|_)*
 OBJECTID		    {LLETTER}({LETTER}|{DIGIT}|_)*
-%x COMMENT STRING
+%x COMMENT STRING IGNORE
 %%
 
  /*
@@ -87,23 +87,23 @@ OBJECTID		    {LLETTER}({LETTER}|{DIGIT}|_)*
                 }
 <COMMENT>\n     {curr_lineno++;}
 <COMMENT>.      {}
-<COMMENT><<EOF>>{
+<COMMENT><<EOF>> {
                     cool_yylval.error_msg="EOF in comment";
                     BEGIN(INITIAL); 
                     return(ERROR);
                 }      
 
 
-/*
- *  The multiple-character operators.
- */
-{DARROW}		                    {return (DARROW);}
+
+{DARROW}		                {
+// multi-line comments above/below deleted because 
+// they somehow trigger "unrecognized rule" issue
+									return (DARROW);
+								}
+{LE}							{return (LE);}
+{ASSIGN}						{return (ASSIGN);}
 
 
-/*
- * Keywords are case-insensitive except for the values true and false,
- * which must begin with a lower-case letter.
- */
 
 [Cc][Ll][Aa][Ss][Ss]                {return(CLASS);}
 [Ee][Ll][Ss][Ee]                    {return(ELSE);}
@@ -138,10 +138,10 @@ t[Rr][Uu][Ee]                       {
   *  \n \t \b \f, the result is c.
   *
   */
-\"                      {
-                            BEGIN{STRING};
-                            string_buf_ptr=string_buf;
-                        }
+\"						{
+							BEGIN(STRING);
+							string_buf_ptr=string_buf;
+						}
 <STRING>\"              {
                             if(string_buf_ptr-string_buf>=MAX_STR_CONST)
                             {
@@ -154,31 +154,134 @@ t[Rr][Uu][Ee]                       {
                             BEGIN(INITIAL);
                             return (STR_CONST);
                         }
-<STRING>\n              {
+<STRING>\n              {	//ab"
+						 	//c"
                             cool_yylval.error_msg="Unterminated string constant";
                             curr_lineno++;	//increment line no.
                             BEGIN(INITIAL);	
                             return (ERROR);
                         }
-<STRING>\\n             {
+<STRING>\\n             {	//"ab\nc"
                             if(string_buf_ptr-string_buf>=MAX_STR_CONST)
                             {
                                 cool_yylval.error_msg="String constant too long";
-                                BEGIN(IGNORE_STRING);
+                                BEGIN(IGNORE);
                                 return (ERROR);
                             }
                             *string_buf_ptr++='\n';
                         }
-<STRING>\\t             {
+<STRING>\\t             {	// "\t"
                             if(string_buf_ptr-string_buf>=MAX_STR_CONST)
                             {
                                 cool_yylval.error_msg="String constant too long";
-                                BEGIN(IGNORE_STRING);
+                                BEGIN(IGNORE);
                                 return (ERROR);
                             }
                             *string_buf_ptr++='\t';
                         }
-                        
+<STRING>\\b             {	// "\b"
+                            if(string_buf_ptr-string_buf>=MAX_STR_CONST)
+                            {
+                                cool_yylval.error_msg="String constant too long";
+                                BEGIN(IGNORE);
+                                return (ERROR);
+                            }
+                            *string_buf_ptr++='\b';
+                        }
+<STRING>\\f             {	// "\f"
+                            if(string_buf_ptr-string_buf>=MAX_STR_CONST)
+                            {
+                                cool_yylval.error_msg="String constant too long";
+                                BEGIN(IGNORE);
+                                return (ERROR);
+                            }
+                            *string_buf_ptr++='\f';
+                        }
+<STRING>\\\n			{	// "ab\
+							// c"
+							curr_lineno++;	
+							if(string_buf_ptr-string_buf>=MAX_STR_CONST)
+                            {
+                                cool_yylval.error_msg="String constant too long";
+                                BEGIN(IGNORE);
+                                return (ERROR);
+                            }
+                            *string_buf_ptr++='\n';
+						}
+<STRING>\\.				{	// "ab\c" 
+							if(string_buf_ptr-string_buf>=MAX_STR_CONST)
+                            {
+                                cool_yylval.error_msg="String constant too long";
+                                BEGIN(IGNORE);
+                                return (ERROR);
+                            }
+                            *string_buf_ptr++=yytext[1];	
+						}
+<STRING>\0				{
+							cool_yylval.error_msg="String contains null character.";
+							BEGIN(IGNORE);
+							return (ERROR);
+						}
+<STRING><<EOF>>			{
+							cool_yylval.error_msg="EOF in string constant";
+							BEGIN(INITIAL);
+							return (ERROR);
+						}
+				
+<STRING>.				{	// any other characters
+							if(string_buf_ptr-string_buf>=MAX_STR_CONST)
+                            {
+                                cool_yylval.error_msg="String constant too long";
+                                BEGIN(IGNORE);
+                                return (ERROR);
+                            }
+                            *string_buf_ptr++=yytext[0];
+						}
 
 
+<IGNORE>\n				{   // ignore rest of the string because of ERROR or buf overflow
+							curr_lineno++; 
+							BEGIN(INITIAL); 
+						}
+<IGNORE>\\\n			{	//"\
+							// "
+							curr_lineno++;
+						}
+<IGNORE>\"				{	//"\""
+							BEGIN(INITIAL);
+						}
+<IGNORE>\\\"			{
+							// "ab\"c"
+						}
+<IGNORE>\\\\			{   
+							// "ab\\c"
+						}
+<IGNORE>.				{
+							// ignore anything other characters
+						}
+
+{OBJECTID}				{   // normal text defined bellow
+							cool_yylval.symbol=idtable.add_string(yytext);
+							return(OBJECTID);
+						}
+{TYPEID}				{
+							cool_yylval.symbol=idtable.add_string(yytext);
+							return(TYPEID);
+						}
+{DIGIT}+				{
+							cool_yylval.symbol=inttable.add_string(yytext);
+							return (INT_CONST);
+						}
+
+
+\n						{curr_lineno++;}
+{WHITESPACE}			{}
+[-@~*+<={}();,.:/]		{	
+// don't know why but this line manages to cover "/"
+							return yytext[0];
+						}
+.						{
+							cool_yylval.error_msg=yytext;
+							return (ERROR);
+						}
 %%   
