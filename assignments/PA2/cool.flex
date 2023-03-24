@@ -43,6 +43,7 @@ extern YYSTYPE cool_yylval;
  *  Add Your own definitions here
  */
 
+// number of (* unmatched yet
 int comment_count=0;
 
 %}
@@ -107,10 +108,6 @@ OBJECTID		    {LLETTER}({LETTER}|{DIGIT}|_)*
 
 [Cc][Ll][Aa][Ss][Ss]                {return(CLASS);}
 [Ee][Ll][Ss][Ee]                    {return(ELSE);}
-f[Aa][Ll][Ss][Ee]                   {
-                                        cool_yylval.boolean=false;
-                                        return(BOOL_CONST);
-                                    }
 [Ff][Ii]                            {return(FI);}
 [Ii][Ff]                            {return(IF);}
 [Ii][Nn]                            {return(IN);}
@@ -123,14 +120,18 @@ f[Aa][Ll][Ss][Ee]                   {
 [Ww][Hh][Ii][Ll][Ee]                {return(WHILE);}
 [Cc][Aa][Ss][Ee]                    {return(CASE);}
 [Ee][Ss][Aa][Cc]                    {return(ESAC);}
-[Nn][Ee][Ww]                        {return(NEW);}
 [Oo][Ff]                            {return(OF);}
+[Nn][Ee][Ww]                        {return(NEW);}
 [Nn][Oo][Tt]                        {return(NOT);}
+
 t[Rr][Uu][Ee]                       {
                                         cool_yylval.boolean=false;
                                         return(BOOL_CONST);
                                     }
-
+f[Aa][Ll][Ss][Ee]                   {
+                                        cool_yylval.boolean=false;
+                                        return(BOOL_CONST);
+                                    }
 
  /*
   *  String constants (C syntax)
