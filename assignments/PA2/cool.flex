@@ -62,7 +62,7 @@ LLETTER			    [a-z]
 WHITESPACE		    [ \n\f\r\t\v]
 TYPEID			    {ULETTER}({LETTER}|{DIGIT}|_)*
 OBJECTID		    {LLETTER}({LETTER}|{DIGIT}|_)*
-%x COMMENT STRING IGNORE
+%x COMMENT STRING SKIP
 %%
 
  /*
@@ -106,7 +106,11 @@ OBJECTID		    {LLETTER}({LETTER}|{DIGIT}|_)*
 
 
 
-[Cc][Ll][Aa][Ss][Ss]                {return(CLASS);}
+(?i:class)                          {   // 10.4 keywords
+// seems that -i means case insensitivity...
+// too late to know
+                                        return(CLASS);
+                                    }
 [Ee][Ll][Ss][Ee]                    {return(ELSE);}
 [Ff][Ii]                            {return(FI);}
 [Ii][Ff]                            {return(IF);}
@@ -162,11 +166,12 @@ f[Aa][Ll][Ss][Ee]                   {
                             BEGIN(INITIAL);	
                             return (ERROR);
                         }
-<STRING>\\n             {	//"ab\nc"
+<STRING>\\n             {	// \n \t \b \f \c
+                            //"ab\nc"
                             if(string_buf_ptr-string_buf>=MAX_STR_CONST)
                             {
                                 cool_yylval.error_msg="String constant too long";
-                                BEGIN(IGNORE);
+                                BEGIN(SKIP);
                                 return (ERROR);
                             }
                             *string_buf_ptr++='\n';
@@ -175,7 +180,7 @@ f[Aa][Ll][Ss][Ee]                   {
                             if(string_buf_ptr-string_buf>=MAX_STR_CONST)
                             {
                                 cool_yylval.error_msg="String constant too long";
-                                BEGIN(IGNORE);
+                                BEGIN(SKIP);
                                 return (ERROR);
                             }
                             *string_buf_ptr++='\t';
@@ -184,7 +189,7 @@ f[Aa][Ll][Ss][Ee]                   {
                             if(string_buf_ptr-string_buf>=MAX_STR_CONST)
                             {
                                 cool_yylval.error_msg="String constant too long";
-                                BEGIN(IGNORE);
+                                BEGIN(SKIP);
                                 return (ERROR);
                             }
                             *string_buf_ptr++='\b';
@@ -193,34 +198,43 @@ f[Aa][Ll][Ss][Ee]                   {
                             if(string_buf_ptr-string_buf>=MAX_STR_CONST)
                             {
                                 cool_yylval.error_msg="String constant too long";
-                                BEGIN(IGNORE);
+                                BEGIN(SKIP);
                                 return (ERROR);
                             }
                             *string_buf_ptr++='\f';
                         }
-<STRING>\\\n			{	// "ab\
-							// c"
-							curr_lineno++;	
-							if(string_buf_ptr-string_buf>=MAX_STR_CONST)
-                            {
-                                cool_yylval.error_msg="String constant too long";
-                                BEGIN(IGNORE);
-                                return (ERROR);
-                            }
-                            *string_buf_ptr++='\n';
+<STRING>\\\0            {   // patch for "\null"
+// seems that \\\0 and \\. are of the same length
+// this rule has to be on top of \\. 
+                            cool_yylval.error_msg="String contains escaped null character.";
+							BEGIN(SKIP);
+							return (ERROR);
 						}
 <STRING>\\.				{	// "ab\c" 
 							if(string_buf_ptr-string_buf>=MAX_STR_CONST)
                             {
                                 cool_yylval.error_msg="String constant too long";
-                                BEGIN(IGNORE);
+                                BEGIN(SKIP);
                                 return (ERROR);
                             }
                             *string_buf_ptr++=yytext[1];	
 						}
+<STRING>\\\n			{	// "ab\
+							// c"
+// this rule, however, manages to work under \\.
+// no idea why
+							curr_lineno++;	
+							if(string_buf_ptr-string_buf>=MAX_STR_CONST)
+                            {
+                                cool_yylval.error_msg="String constant too long";
+                                BEGIN(SKIP);
+                                return (ERROR);
+                            }
+                            *string_buf_ptr++='\n';
+						}
 <STRING>\0				{
 							cool_yylval.error_msg="String contains null character.";
-							BEGIN(IGNORE);
+							BEGIN(SKIP);
 							return (ERROR);
 						}
 <STRING><<EOF>>			{
@@ -229,35 +243,37 @@ f[Aa][Ll][Ss][Ee]                   {
 							return (ERROR);
 						}
 				
+
+
 <STRING>.				{	// any other characters
 							if(string_buf_ptr-string_buf>=MAX_STR_CONST)
                             {
                                 cool_yylval.error_msg="String constant too long";
-                                BEGIN(IGNORE);
+                                BEGIN(SKIP);
                                 return (ERROR);
                             }
                             *string_buf_ptr++=yytext[0];
 						}
 
 
-<IGNORE>\n				{   // ignore rest of the string because of ERROR or buf overflow
+<SKIP>\n				{   // ignore rest of the string because of ERROR or buf overflow
 							curr_lineno++; 
 							BEGIN(INITIAL); 
 						}
-<IGNORE>\\\n			{	//"\
+<SKIP>\\\n			    {	//"\
 							// "
 							curr_lineno++;
 						}
-<IGNORE>\"				{	//"\""
+<SKIP>\"				{	//"\""
 							BEGIN(INITIAL);
 						}
-<IGNORE>\\\"			{
+<SKIP>\\\"			    {
 							// "ab\"c"
 						}
-<IGNORE>\\\\			{   
+<SKIP>\\\\			    {   
 							// "ab\\c"
 						}
-<IGNORE>.				{
+<SKIP>.				    {
 							// ignore anything other characters
 						}
 
