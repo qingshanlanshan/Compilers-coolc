@@ -294,7 +294,7 @@ f[Aa][Ll][Ss][Ee]                   {
 \n						{curr_lineno++;}
 {WHITESPACE}			{}
 [-@~*+<={}();,.:/]		{	
-// don't know why but this line manages to cover "/"
+// "-" and "/" must not be in the middle
 							return yytext[0];
 						}
 .						{
