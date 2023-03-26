@@ -79,7 +79,7 @@ OBJECTID		    {LLETTER}({LETTER}|{DIGIT}|_)*
                 }         
 
 <COMMENT>"(*"   {
-                    comment_count--;
+                    comment_count++;
                 }
 <COMMENT>"*)"   {
                     comment_count--;
@@ -265,6 +265,7 @@ f[Aa][Ll][Ss][Ee]                   {
 							curr_lineno++;
 						}
 <SKIP>\"				{	//"\""
+                            // end of the string
 							BEGIN(INITIAL);
 						}
 <SKIP>\\\"			    {

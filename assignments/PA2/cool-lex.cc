@@ -660,8 +660,8 @@ static const flex_int16_t yy_rule_linenum[55] =
       110,  115,  116,  117,  118,  119,  120,  121,  122,  123,
       124,  125,  126,  127,  128,  129,  130,  132,  136,  147,
       151,  163,  170,  180,  189,  198,  207,  214,  223,  235,
-      248,  259,  263,  266,  269,  272,  275,  279,  283,  287,
-      293,  294,  295,  299
+      248,  259,  263,  266,  270,  273,  276,  280,  284,  288,
+      294,  295,  296,  300
     } ;
 
 /* The intent behind this definition is that it'll catch
@@ -1120,7 +1120,7 @@ case 4:
 YY_RULE_SETUP
 #line 82 "cool.flex"
 {
-                    comment_count--;
+                    comment_count++;
                 }
 	YY_BREAK
 case 5:
@@ -1464,33 +1464,34 @@ case 44:
 YY_RULE_SETUP
 #line 266 "cool.flex"
 {	//"\""
+                            // end of the string
 							BEGIN(INITIAL);
 						}
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 269 "cool.flex"
+#line 270 "cool.flex"
 {
 							// "ab\"c"
 						}
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 272 "cool.flex"
+#line 273 "cool.flex"
 {   
 							// "ab\\c"
 						}
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 275 "cool.flex"
+#line 276 "cool.flex"
 {
 							// ignore anything other characters
 						}
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 279 "cool.flex"
+#line 280 "cool.flex"
 {   // normal text defined bellow
 							cool_yylval.symbol=idtable.add_string(yytext);
 							return(OBJECTID);
@@ -1498,7 +1499,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 283 "cool.flex"
+#line 284 "cool.flex"
 {
 							cool_yylval.symbol=idtable.add_string(yytext);
 							return(TYPEID);
@@ -1506,7 +1507,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 287 "cool.flex"
+#line 288 "cool.flex"
 {
 							cool_yylval.symbol=inttable.add_string(yytext);
 							return (INT_CONST);
@@ -1515,26 +1516,26 @@ YY_RULE_SETUP
 case 51:
 /* rule 51 can match eol */
 YY_RULE_SETUP
-#line 293 "cool.flex"
+#line 294 "cool.flex"
 {curr_lineno++;}
 	YY_BREAK
 case 52:
 /* rule 52 can match eol */
 YY_RULE_SETUP
-#line 294 "cool.flex"
+#line 295 "cool.flex"
 {}
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 295 "cool.flex"
+#line 296 "cool.flex"
 {	
-// don't know why but this line manages to cover "/"
+// "-" and "/" must not be in the middle
 							return yytext[0];
 						}
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 299 "cool.flex"
+#line 300 "cool.flex"
 {
 							cool_yylval.error_msg=yytext;
 							return (ERROR);
@@ -1542,10 +1543,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 303 "cool.flex"
+#line 304 "cool.flex"
 ECHO;
 	YY_BREAK
-#line 1549 "cool-lex.cc"
+#line 1550 "cool-lex.cc"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(SKIP):
 	yyterminate();
@@ -2695,6 +2696,6 @@ void yyfree (void * ptr )
 
 /* %ok-for-header */
 
-#line 303 "cool.flex"
+#line 304 "cool.flex"
 
 
