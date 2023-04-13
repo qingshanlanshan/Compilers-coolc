@@ -135,11 +135,37 @@
     %type <class_> class
     
     /* You will want to change the following line. */
-    %type <features> dummy_feature_list
-    
+    %type <features> feature_list
+    %type <feature> feature
+    %type <formal> formal
+    %type <formals> formal_list
+    %type <case_> case
+    %type <cases> case_list
+    %type <expression> expression
+    %type <expressions> expression_list
+    /* Feature feature;
+      Features features;
+      Formal formal;
+      Formals formals;
+      Case case_;
+      Cases cases;
+      Expression expression;
+      Expressions expressions;
+    */
+
     /* Precedence declarations go here. */
     
+    %left '.'
+    %left '@'
+    %left '~'
+    %left ISVOID
+    %left '*' '/'
+    %left '+' '-'
+    %nonassoc LE '=' '<'
+    %left NOT
+    %right ASSIGN
     
+
     %%
     /* 
     Save the root of the abstract syntax tree in a global variable.
@@ -149,7 +175,7 @@
     
     class_list
     : class			/* single class */
-    { $$ = single_Classes($1);
+    { $$ = single_Classes($1);  
     parse_results = $$; }
     | class_list class	/* several classes */
     { $$ = append_Classes($1,single_Classes($2)); 

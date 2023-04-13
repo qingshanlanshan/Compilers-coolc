@@ -87,12 +87,14 @@ OBJECTID		    {LLETTER}({LETTER}|{DIGIT}|_)*
                         BEGIN(INITIAL);
                 }
 <COMMENT>\n     {curr_lineno++;}
-<COMMENT>.      {}
 <COMMENT><<EOF>> {
                     cool_yylval.error_msg="EOF in comment";
                     BEGIN(INITIAL); 
                     return(ERROR);
                 }      
+<COMMENT>.      {
+                    // ignore any other characters
+                }
 
 
 
