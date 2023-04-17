@@ -1,0 +1,2 @@
+Class D inherts A {
+};
