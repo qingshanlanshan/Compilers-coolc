@@ -1,2 +1,3 @@
-Class D inherts A {
+class A {
+    b:Int;
 };
