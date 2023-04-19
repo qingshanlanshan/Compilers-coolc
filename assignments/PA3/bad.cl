@@ -7,8 +7,51 @@
  *  generates
  *)
 
-(* no error *)
 class A {
+    -- feature error
+    a:Int 
+    true;
+    b:Int<-;
+    assoc():Int{
+        {
+            a<=b<=2;
+            ~a~a;
+            NOT a NOT a;
+        }
+    };
+
+    c(x:Int):{}; -- no return
+    dispatch_error():Int{
+        {
+            a<-A;
+            (a+b)@.print();
+            a@A.print(2,);
+            b@B.C(x);
+            .print();
+            A.print();
+        }
+    };
+    formal_error(a,b,c){};
+    statement_error():Int{
+        {
+            if
+            -- then
+            else
+            fi;
+
+            while();
+
+            case 123
+            -- of
+            esac;
+
+            1+-2;
+            1+;
+
+        }
+        
+    };
+    
 };
 
 (* error:  b is not a type identifier *)

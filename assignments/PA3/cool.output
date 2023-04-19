@@ -71,11 +71,12 @@ Grammar
    52         | OBJECTID ':' TYPEID ',' let_list
    53         | OBJECTID ':' TYPEID ASSIGN expr ',' let_list
    54         | error let_list
+   55         | error
 
-   55 case: OBJECTID ':' TYPEID DARROW expr ';'
+   56 case: OBJECTID ':' TYPEID DARROW expr ';'
 
-   56 case_list: case
-   57          | case_list case
+   57 case_list: case
+   58          | case_list case
 
 
 Terminals, with rules where they appear
@@ -89,15 +90,15 @@ Terminals, with rules where they appear
     '-' (45) 38
     '.' (46) 26 27
     '/' (47) 40
-    ':' (58) 11 12 13 17 50 51 52 53 55
-    ';' (59) 4 5 6 7 9 10 21 22 23 24 55
+    ':' (58) 11 12 13 17 50 51 52 53 56
+    ';' (59) 4 5 6 7 9 10 21 22 23 24 56
     '<' (60) 42
     '=' (61) 44
     '@' (64) 26
     '{' (123) 6 7 11 32
     '}' (125) 6 7 11 32
     '~' (126) 41
-    error (256) 4 5 10 23 24 54
+    error (256) 4 5 10 23 24 54 55
     CLASS (258) 6 7
     ELSE (259) 30
     FI (260) 30
@@ -112,14 +113,14 @@ Terminals, with rules where they appear
     CASE (269) 34
     ESAC (270) 34
     OF (271) 34
-    DARROW (272) 55
+    DARROW (272) 56
     NEW (273) 35
     ISVOID (274) 36
     STR_CONST <symbol> (275) 48
     INT_CONST <symbol> (276) 47
     BOOL_CONST <boolean> (277) 49
-    TYPEID <symbol> (278) 6 7 11 12 13 17 26 35 50 51 52 53 55
-    OBJECTID <symbol> (279) 11 12 13 17 25 26 27 28 29 50 51 52 53 55
+    TYPEID <symbol> (278) 6 7 11 12 13 17 26 35 50 51 52 53 56
+    OBJECTID <symbol> (279) 11 12 13 17 25 26 27 28 29 50 51 52 53 56
     ASSIGN (280) 13 25 51 53
     NOT (281) 45
     LE (282) 43
@@ -159,16 +160,16 @@ Nonterminals, with rules where they appear
         on right: 22 23 32
     expr <expression> (55)
         on left: 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49
-        on right: 11 13 19 20 21 22 25 26 27 30 31 34 36 37 38 39 40 41 42 43 44 45 46 50 51 53 55
+        on right: 11 13 19 20 21 22 25 26 27 30 31 34 36 37 38 39 40 41 42 43 44 45 46 50 51 53 56
     let_list <expression> (56)
-        on left: 50 51 52 53 54
+        on left: 50 51 52 53 54 55
         on right: 33 52 53 54
     case <case_> (57)
-        on left: 55
-        on right: 56 57
+        on left: 56
+        on right: 57 58
     case_list <cases> (58)
-        on left: 56 57
-        on right: 34 57
+        on left: 57 58
+        on right: 34 58
 
 
 State 0
@@ -802,9 +803,31 @@ State 56
 State 57
 
    54 let_list: error • let_list
+   55         | error •
 
     error     shift, and go to state 57
     OBJECTID  shift, and go to state 58
+
+    ELSE  reduce using rule 55 (let_list)
+    FI    reduce using rule 55 (let_list)
+    IN    reduce using rule 55 (let_list)
+    LOOP  reduce using rule 55 (let_list)
+    POOL  reduce using rule 55 (let_list)
+    THEN  reduce using rule 55 (let_list)
+    OF    reduce using rule 55 (let_list)
+    LE    reduce using rule 55 (let_list)
+    '<'   reduce using rule 55 (let_list)
+    '='   reduce using rule 55 (let_list)
+    '+'   reduce using rule 55 (let_list)
+    '-'   reduce using rule 55 (let_list)
+    '*'   reduce using rule 55 (let_list)
+    '/'   reduce using rule 55 (let_list)
+    '@'   reduce using rule 55 (let_list)
+    '.'   reduce using rule 55 (let_list)
+    ';'   reduce using rule 55 (let_list)
+    '}'   reduce using rule 55 (let_list)
+    ')'   reduce using rule 55 (let_list)
+    ','   reduce using rule 55 (let_list)
 
     let_list  go to state 83
 
@@ -1723,22 +1746,22 @@ State 108
 
 State 109
 
-   55 case: OBJECTID • ':' TYPEID DARROW expr ';'
+   56 case: OBJECTID • ':' TYPEID DARROW expr ';'
 
     ':'  shift, and go to state 124
 
 
 State 110
 
-   56 case_list: case •
+   57 case_list: case •
 
-    $default  reduce using rule 56 (case_list)
+    $default  reduce using rule 57 (case_list)
 
 
 State 111
 
    34 expr: CASE expr OF case_list • ESAC
-   57 case_list: case_list • case
+   58 case_list: case_list • case
 
     ESAC      shift, and go to state 125
     OBJECTID  shift, and go to state 109
@@ -1914,7 +1937,7 @@ State 123
 
 State 124
 
-   55 case: OBJECTID ':' • TYPEID DARROW expr ';'
+   56 case: OBJECTID ':' • TYPEID DARROW expr ';'
 
     TYPEID  shift, and go to state 134
 
@@ -1928,9 +1951,9 @@ State 125
 
 State 126
 
-   57 case_list: case_list case •
+   58 case_list: case_list case •
 
-    $default  reduce using rule 57 (case_list)
+    $default  reduce using rule 58 (case_list)
 
 
 State 127
@@ -2062,7 +2085,7 @@ State 133
 
 State 134
 
-   55 case: OBJECTID ':' TYPEID • DARROW expr ';'
+   56 case: OBJECTID ':' TYPEID • DARROW expr ';'
 
     DARROW  shift, and go to state 140
 
@@ -2140,7 +2163,7 @@ State 139
 
 State 140
 
-   55 case: OBJECTID ':' TYPEID DARROW • expr ';'
+   56 case: OBJECTID ':' TYPEID DARROW • expr ';'
 
     IF          shift, and go to state 40
     LET         shift, and go to state 41
@@ -2213,7 +2236,7 @@ State 144
    42     | expr • '<' expr
    43     | expr • LE expr
    44     | expr • '=' expr
-   55 case: OBJECTID ':' TYPEID DARROW expr • ';'
+   56 case: OBJECTID ':' TYPEID DARROW expr • ';'
 
     LE   shift, and go to state 72
     '<'  shift, and go to state 73
@@ -2236,6 +2259,6 @@ State 145
 
 State 146
 
-   55 case: OBJECTID ':' TYPEID DARROW expr ';' •
+   56 case: OBJECTID ':' TYPEID DARROW expr ';' •
 
-    $default  reduce using rule 55 (case)
+    $default  reduce using rule 56 (case)

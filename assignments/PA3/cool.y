@@ -143,15 +143,6 @@
     %type <cases> case_list
     %type <expression> expr let_list
     %type <expressions> expr_list expr_list_no_empty
-    /* Feature feature;
-      Features features;
-      Formal formal;
-      Formals formals;
-      Case case_;
-      Cases cases;
-      Expression expression;
-      Expressions expressions;
-    */
 
     /* Precedence declarations go here. */
 
@@ -159,6 +150,7 @@
     %right ASSIGN
     %nonassoc NOT
     %nonassoc '<' LE '='
+    /* ' */
     %left '+' '-'
     %left '*' '/'
     %nonassoc ISVOID
@@ -166,7 +158,7 @@
     %left '@'
     %left '.'
     
-    /* ' */
+    
 
     %%
     /* 
@@ -193,9 +185,9 @@
     ;
     
     /* Feature list may be empty, but no empty features in list. */
-    feature_list    :  /* empty */         {$$ = nil_Features(); }
+    feature_list    :  /* empty */              {$$ = nil_Features(); }
                     | feature_list feature ';'  {$$ = append_Features($1,single_Features($2));}
-                    | feature_list error ';'                     {$$ = $1;}
+                    | feature_list error ';'    {$$ = $1;}
     ;
 
     feature     :   OBJECTID '(' formal_list ')' ':' TYPEID '{' expr '}'
@@ -219,11 +211,11 @@
                                 { $$=append_Expressions($1, single_Expressions($3)); }
     /* avoid reduce/shift conflicts */
     expr_list_no_empty  : expr ';'      { $$=single_Expressions($1); }
-                | expr_list_no_empty expr ';'
-                                { $$=append_Expressions($1, single_Expressions($2)); }
-                | expr_list_no_empty error ';'
-                                { $$=$1; }
-                | error ';'     { $$=nil_Expressions(); }
+                        | expr_list_no_empty expr ';'
+                                        { $$=append_Expressions($1, single_Expressions($2)); }
+                        | expr_list_no_empty error ';'
+                                        { $$=$1; }
+                        | error ';'     { $$=nil_Expressions(); }
     ;
     
             /* Objects */
@@ -238,6 +230,7 @@
             |   OBJECTID        { $$=object($1); }
 
             /* statements */
+            
             /* If */
             |   IF expr THEN expr ELSE expr FI  { $$=cond($2, $4, $6); }
             /* while */
@@ -248,10 +241,8 @@
             |   LET let_list                    { $$=$2; }
             /* case */
             |   CASE expr OF case_list ESAC     { $$=typcase($2, $4); }
-            
             /* new object*/
             |   NEW TYPEID      { $$=new_($2); }
-            
             /* isvoid */
             |   ISVOID expr     { $$=isvoid($2); }
             
@@ -282,6 +273,7 @@
                 |   OBJECTID ':' TYPEID ASSIGN expr ',' let_list
                     { $$=let($1, $3, $5, $7); }
                 |   error let_list    {}
+                |   error             {}
     ;
     
     case        :   OBJECTID ':' TYPEID DARROW expr ';'
