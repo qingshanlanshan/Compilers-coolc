@@ -11,6 +11,7 @@ class A {
     -- feature error
     a:Int 
     true;
+    c:Int;
     b:Int<-;
     assoc():Int{
         {
@@ -56,7 +57,7 @@ class A {
 
 (* error:  b is not a type identifier *)
 Class b inherits A {
-};
+};  
 
 (* error:  a is not a type identifier *)
 Class C inherits a {

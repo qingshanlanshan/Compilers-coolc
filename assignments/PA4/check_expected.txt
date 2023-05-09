@@ -1,0 +1,19 @@
+bad.cl:4: Attribute b is multiply defined in class.
+bad.cl:5: 'self' cannot be the name of an attribute.
+bad.cl:13: Method init is multiply defined.
+bad.cl:34: Attribute b is an attribute of an inherited class.
+bad.cl:36: Incompatible number of formal parameters in redefined method init.
+bad.cl:43: In redefined method init, parameter type Int is different from original type Bool
+bad.cl:35: Class E of attribute c is undefined.
+bad.cl:36: Class D of formal parameter x is undefined.
+bad.cl:36: Formal parameter y cannot have type SELF_TYPE.
+bad.cl:36: Formal parameter x is multiply defined.
+bad.cl:36: 'self' cannot be the name of a formal parameter.
+bad.cl:38: Cannot assign to 'self'.
+bad.cl:38: Type Int of assigned expression does not conform to declared type SELF_TYPE of identifier self.
+bad.cl:40: Assignment to undeclared variable w.
+bad.cl:36: Inferred return type Int of method init does not conform to declared return type C.
+bad.cl:25: In call of method init, type Int of parameter y does not conform to declared type Bool.
+bad.cl:26: Method init called with wrong number of arguments.
+bad.cl:27: Dispatch to undefined method iinit.
+Compilation halted due to static semantic errors.
