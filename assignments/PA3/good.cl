@@ -32,7 +32,7 @@ class C {
 			x<z.foo(y)
 	};
 
-	试试utf8():Int{};
+
 };
 
 
@@ -43,7 +43,7 @@ class C {
 	};
 	dispatch2(): INT {
 		let x:Int, y:Object<-new Y in 
-			print(y<-x.,"123")
+			print(y<-x.value())
 	};
 	
 };
