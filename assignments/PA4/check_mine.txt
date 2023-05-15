@@ -31,10 +31,10 @@ bad.cl:58: 'self' bound in 'case'.
 bad.cl:58: Class SELF_TYPE of case branch is undefined.
 bad.cl:57: Duplicate branch Int in case statement.
 bad.cl:61: Class E of case branch is undefined.
-bad.cl:64: Assignment to undeclared variable z.
-bad.cl:64: Inferred type Int of initialization of y does not conform to identifier's declared type Bool.
 bad.cl:64: Class E of let-bound identifier self is undefined.
 bad.cl:64: 'self' cannot be bound in a 'let' expression.
+bad.cl:64: Inferred type Int of initialization of y does not conform to identifier's declared type Bool.
+bad.cl:64: Assignment to undeclared variable z.
 bad.cl:65: non-Int arguments: Int + Bool
 bad.cl:66: non-Int arguments: Bool - Int
 bad.cl:67: non-Int arguments: Int * Bool

@@ -790,17 +790,19 @@ Symbol block_class::check(Class_ cls)
 Symbol let_class::check(Class_ cls)
 {
     Symbol t_init = init->check(cls);
-    Symbol t_body = body->check(cls);
+    
     if (type_decl != SELF_TYPE && classtable->class_table.find(type_decl) == classtable->class_table.end())
         classtable->semant_error(cls->get_filename(), this) << "Class " << type_decl << " of let-bound identifier " << identifier << " is undefined." << endl;
     else if (!type_check(t_init, type_decl))
         classtable->semant_error(cls->get_filename(), this) << "Inferred type " << t_init << " of initialization of " << identifier << " does not conform to identifier's declared type " << type_decl << "." << endl;
-    classtable->object_table->enterscope();
+    // classtable->object_table->enterscope();
     if (identifier == self)
         classtable->semant_error(cls->get_filename(), this) << "'self' cannot be bound in a 'let' expression." << endl;
     else
         classtable->object_table->addid(identifier, &type_decl);
-    classtable->object_table->exitscope();
+    // classtable->object_table->exitscope();
+
+    Symbol t_body = body->check(cls);
     return set_type(t_body)->type;
 }
 // e1 + e2
