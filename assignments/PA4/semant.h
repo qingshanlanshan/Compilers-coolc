@@ -47,4 +47,5 @@ ClassTable *classtable;
 method_class* find_method(Symbol class_name, Symbol method_name);
 bool type_check(Symbol child, Symbol parent);
 attr_class *get_attr(Symbol class_name, Symbol attr_name);
+Symbol find_common_ancestor(Symbol, Symbol);
 #endif
