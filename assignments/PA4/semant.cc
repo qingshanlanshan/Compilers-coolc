@@ -116,7 +116,7 @@ ClassTable::ClassTable(Classes classes) : semant_errors(0), error_stream(cerr)
 void ClassTable::check_feature()
 {
     // cerr<<invalid_parent<<endl;
-    if (inheritance_cycles||invalid_parent)
+    if (inheritance_cycles || invalid_parent)
         return;
     for (auto it = class_table.begin(); it != class_table.end(); it++)
     {
@@ -164,8 +164,8 @@ void attr_class::update(Class_ cls)
     if (type_decl != SELF_TYPE && classtable->class_table.find(type_decl) == classtable->class_table.end())
         classtable->semant_error(cls->get_filename(), this) << "Class " << type_decl << " of attribute " << name << " is undefined." << endl;
     // check if the type of init expr matches type_decl
-    if(expr_type!=No_type && !type_check(expr_type, type_decl))
-     	classtable->semant_error(cls->get_filename(),this)<<"Inferred type "<<expr_type<<" of initialization of attribute "<<name<<" does not conform to declared type "<<type_decl<<"."<<endl;
+    if (expr_type != No_type && !type_check(expr_type, type_decl))
+        classtable->semant_error(cls->get_filename(), this) << "Inferred type " << expr_type << " of initialization of attribute " << name << " does not conform to declared type " << type_decl << "." << endl;
 }
 
 // if child type is a parent type
@@ -245,7 +245,7 @@ void method_class::update(Class_ cls)
         // the actual return type does not match the declared return type
         // cerr<<type_check(real_return_type, return_type)<<endl;
         if (!type_check(real_return_type, return_type))
-            classtable->semant_error(cls->get_filename(), this) << "Inferred return type " << real_return_type<< " of method "<<name << " does not conform to declared return type " << return_type << "." << endl;
+            classtable->semant_error(cls->get_filename(), this) << "Inferred return type " << real_return_type << " of method " << name << " does not conform to declared return type " << return_type << "." << endl;
     }
     classtable->object_table->exitscope();
 }
@@ -764,7 +764,7 @@ Symbol typcase_class::check(Class_ cls)
 
         if (case_name == self)
             classtable->semant_error(cls->get_filename(), ith_case) << "'self' bound in 'case'." << endl;
-        
+
         if (type_table.find(case_type) == type_table.end())
             type_table.insert(case_type);
         else
@@ -793,19 +793,25 @@ Symbol block_class::check(Class_ cls)
 Symbol let_class::check(Class_ cls)
 {
     Symbol t_init = init->check(cls);
-    
+
     if (type_decl != SELF_TYPE && classtable->class_table.find(type_decl) == classtable->class_table.end())
         classtable->semant_error(cls->get_filename(), this) << "Class " << type_decl << " of let-bound identifier " << identifier << " is undefined." << endl;
-    else if (!type_check(t_init, type_decl))
-        classtable->semant_error(cls->get_filename(), this) << "Inferred type " << t_init << " of initialization of " << identifier << " does not conform to identifier's declared type " << type_decl << "." << endl;
-    // classtable->object_table->enterscope();
+    else
+    {
+        // cerr << t_init << endl;
+        // cerr << type_decl << endl;
+        if (t_init!=No_type&&!type_check(t_init, type_decl))
+
+            classtable->semant_error(cls->get_filename(), this) << "Inferred type " << t_init << " of initialization of " << identifier << " does not conform to identifier's declared type " << type_decl << "." << endl;
+    }
+    classtable->object_table->enterscope();
     if (identifier == self)
         classtable->semant_error(cls->get_filename(), this) << "'self' cannot be bound in a 'let' expression." << endl;
     else
         classtable->object_table->addid(identifier, &type_decl);
-    // classtable->object_table->exitscope();
-
     Symbol t_body = body->check(cls);
+    classtable->object_table->exitscope();
+
     return set_type(t_body)->type;
 }
 // e1 + e2
