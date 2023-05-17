@@ -38,6 +38,7 @@ public:
     SymbolTable<Symbol, Symbol> *object_table;
     SymbolTable<Symbol, Symbol> *method_table;
     bool inheritance_cycles;
+    bool invalid_parent;
 
     bool check_inherit_cycle();
     bool check_valid_parents();

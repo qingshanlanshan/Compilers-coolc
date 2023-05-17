@@ -105,7 +105,7 @@ ClassTable::ClassTable(Classes classes) : semant_errors(0), error_stream(cerr)
             class_table.insert(std::pair<Symbol, Class_>(ith_class->get_name(), ith_class));
         }
     }
-    if (has_main_class && !redefinition && !check_valid_parents() && (inheritance_cycles = check_inherit_cycle()))
+    if (has_main_class && !redefinition && !(invalid_parent = check_valid_parents()) && (inheritance_cycles = check_inherit_cycle()))
     {
         semant_error() << "Class Main is not defined." << std::endl;
     }
@@ -115,7 +115,8 @@ ClassTable::ClassTable(Classes classes) : semant_errors(0), error_stream(cerr)
 
 void ClassTable::check_feature()
 {
-    if (inheritance_cycles)
+    // cerr<<invalid_parent<<endl;
+    if (inheritance_cycles||invalid_parent)
         return;
     for (auto it = class_table.begin(); it != class_table.end(); it++)
     {
@@ -354,12 +355,14 @@ bool ClassTable::check_inherit_cycle()
             {
                 semant_error(class_table[it->first]) << "Class " << it->first << ", or an ancestor of " << it->first << ", is involved in an inheritance cycle." << endl;
                 ret = true;
+                break;
             }
         }
     }
     return ret;
 }
 
+// return true if invalid parent is found, else false
 bool ClassTable::check_valid_parents()
 {
     bool ret = false;
