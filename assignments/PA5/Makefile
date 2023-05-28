@@ -44,7 +44,7 @@ compile:	cgen change-prot
 change-prot:
 	@-chmod 660 ${SRC} ${OUTPUT}
 
-cgen:	${OBJS} parser semant
+cgen:	${OBJS} lexer parser semant
 	${CC} ${CFLAGS} ${OBJS} ${LIB} -o cgen
 
 .cc.o:
