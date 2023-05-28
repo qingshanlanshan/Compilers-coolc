@@ -49,6 +49,7 @@ class A inherits C{
 			let x : Int, value : Int <- x + 1 in
 				let value : Int <- 1 in
 					x + value; 
+			self;
 		}
 	};
 };

@@ -105,7 +105,7 @@ ClassTable::ClassTable(Classes classes) : semant_errors(0), error_stream(cerr)
             class_table.insert(std::pair<Symbol, Class_>(ith_class->get_name(), ith_class));
         }
     }
-    if (has_main_class && !redefinition && !(invalid_parent = check_valid_parents()) && (inheritance_cycles = check_inherit_cycle()))
+    if (!redefinition && !(invalid_parent = check_valid_parents()) && !(inheritance_cycles = check_inherit_cycle())&&(!has_main_class))
     {
         semant_error() << "Class Main is not defined." << std::endl;
     }

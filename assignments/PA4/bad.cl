@@ -74,6 +74,6 @@ class A inherits C{
 		}
 	};
 };
-
+class X inherits Int{};
 -- class X inherits Y{};
 -- class Y inherits X{};
