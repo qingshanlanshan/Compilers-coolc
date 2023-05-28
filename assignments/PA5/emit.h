@@ -21,6 +21,8 @@
 // Global names
 #define CLASSNAMETAB         "class_nameTab"
 #define CLASSOBJTAB          "class_objTab"
+#define CLASSPARENTTAB       "class_parentTab"
+#define INVALIDPARENTTAG     -1
 #define INTTAG               "_int_tag"
 #define BOOLTAG              "_bool_tag"
 #define STRINGTAG            "_string_tag"
@@ -31,7 +33,7 @@
 #define METHOD_SEP           "."
 #define CLASSINIT_SUFFIX     "_init"
 #define PROTOBJ_SUFFIX       "_protObj"
-#define OBJECTPROTOBJ        "Object"PROTOBJ_SUFFIX
+#define OBJECTPROTOBJ        "Object" PROTOBJ_SUFFIX
 #define INTCONST_PREFIX      "int_const"
 #define STRCONST_PREFIX      "str_const"
 #define BOOLCONST_PREFIX     "bool_const"
@@ -71,6 +73,10 @@
 #define T1   "$t1"		// Temporary 1 
 #define T2   "$t2"		// Temporary 2 
 #define T3   "$t3"		// Temporary 3 
+#define T4   "$t4"		// Temporary 4 
+#define T5   "$t5"		// Temporary 5 
+#define T6   "$t6"		// Temporary 6
+#define T7   "$t7"		// Temporary 7
 #define SP   "$sp"		// Stack pointer 
 #define FP   "$fp"		// Frame pointer 
 #define RA   "$ra"		// Return address 
@@ -80,7 +86,7 @@
 //
 #define JALR  "\tjalr\t"  
 #define JAL   "\tjal\t"                 
-#define RET   "\tjr\t"RA"\t"
+#define RET   "\tjr\t" RA"\t"
 
 #define SW    "\tsw\t"
 #define LW    "\tlw\t"
@@ -104,5 +110,4 @@
 #define BLEQ     "\tble\t"
 #define BLT      "\tblt\t"
 #define BGT      "\tbgt\t"
-
 
